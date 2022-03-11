@@ -3,11 +3,11 @@ const guessButton = document.querySelector(".guess");
 const letterInput = document.querySelector(".letter");
 const inProgress = document.querySelector(".word-in-progress");
 const remaining = document.querySelector(".remaining");
-const span = document.querySelector("span");
+const span = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const againButton = document.querySelector(".play-again");
 let word = "magnolia";
-const guessedLetters = [];
+let guessedLetters = [];
 let remainingGuesses = 8;
 
 const getWord = async function () {
@@ -19,6 +19,8 @@ const getWord = async function () {
     update(word);
 };
 
+getWord();
+
 const update = function (word) {
     const updateLetters = [];
     for (const letter of word) {
@@ -27,8 +29,6 @@ const update = function (word) {
     }
     inProgress.innerText = updateLetters.join("");
 };
-
-getWord();
 
 guessButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -46,7 +46,7 @@ const inputValidator = function (input) {
     const acceptedLetter = /[a-zA-Z]/;
     if (input.length === 0) {
         message.innerText = "Please enter a letter!";
-    } else if (input.length > 1 ) {
+    } else if (input.length > 1) {
         message.innerText = "Please enter only one letter!";
     } else if (!input.match(acceptedLetter)) {
         message.innerText = "Please only enter letters!";
@@ -103,6 +103,9 @@ const remainedGuess = function (guess) {
 
     if (remainingGuesses === 0) {
         message.innerHTML = `Oh, shoot! Game over. The word was <span class="highlight">${word}</span>`;
+
+        startOver();
+        
     } else if (remainingGuesses === 1) {
         span.innerText = `${remainingGuesses} guess left`;
     } else {
@@ -114,5 +117,30 @@ const winnerGuess = function () {
     if (word.toUpperCase() === inProgress.innerText) {
         message.classList.add("win");
         message.innerHTML = `<p class="highlight">You guessed the word correct! Congrats!</p>`;
+
+        startOver();
     }
 };
+
+const startOver = function () {
+    guessButton.classList.add("hide");
+    remaining.classList.add("hide");
+    guessedList.classList.add("hide");
+    againButton.classList.remove("hide");
+};
+
+againButton.addEventListener("click", function () {
+    message.classList.remove("win");
+    guessedLetters = [];
+    remainingGuesses = 8;
+    span.innerText = `${remainingGuesses} guesses`;
+    guessedList.innerHTML = "";
+    message.innerText = "";
+    
+    getWord();
+
+    guessButton.classList.remove("hide");
+    againButton.classList.add("hide");
+    guessedList.classList.remove("hide");
+    remaining.classList.remove("hide");
+});
